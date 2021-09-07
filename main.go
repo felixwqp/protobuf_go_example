@@ -4,18 +4,57 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"simple/simplepb"
+
+	complexpb "github.com/felixwqp/protobuf_go_play/src/complex"
+	"github.com/felixwqp/protobuf_go_play/src/enum_example"
+	simplepb "github.com/felixwqp/protobuf_go_play/src/simple"
 
 	"github.com/golang/protobuf/proto"
 	// proto "github.com/golang/protobuf/proto"
 )
 
 func main() {
+	ReadWriteDemo()
+	doEnum()
+	doComplex()
+}
+
+func doComplex() {
+	cm := complexpb.ComplexMessage{
+		OneDummy: &complexpb.DummyMessage{
+			Id:   1,
+			Name: "FirstMsg",
+		},
+		MultipleDummy: []*complexpb.DummyMessage{
+			&complexpb.DummyMessage{
+				Id:   12,
+				Name: "Second",
+			},
+			&complexpb.DummyMessage{
+				Id:   144,
+				Name: "aaSecond",
+			},
+		},
+	}
+	fmt.Println(cm)
+}
+
+func doEnum() {
+	ep := enum_example.EnumMessage{
+		Id:           42,
+		DayOfTheWeek: enum_example.DayOfTheWeek_MONDAY,
+	}
+	ep.DayOfTheWeek = enum_example.DayOfTheWeek_SATURDAY
+	fmt.Println(ep)
+
+}
+
+func ReadWriteDemo() {
 	sm := doSimple()
 	writeToFile("simple.bin", sm)
 	sm2 := &simplepb.SimpleMessage{}
 	readFromFile("simple.bin", sm2)
-	fmt.Println("Ritten", sm2)
+	fmt.Println("Written", sm2)
 }
 
 func writeToFile(fname string, pb proto.Message) error {
